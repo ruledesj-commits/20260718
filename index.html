@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5학년 사회 - 세계 대륙과 대양 탐험</title>
+    <title>5학년 사회 - 세계 대륙과 대양 탐험 웹앱</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #ff6b6b;
-            --bg: #f0f4f8;
-            --card-bg: #ffffff;
+            --ocean-color: #2563eb;
+            --continent-color: #ea580c;
+            --bg-light: #f8fafc;
+            --panel-bg: #ffffff;
         }
 
         body {
             font-family: 'Malgun Gothic', sans-serif;
-            background-color: var(--bg);
+            background-color: var(--bg-light);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -22,151 +22,193 @@
             align-items: center;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .description {
-            color: #666;
+        header {
+            text-align: center;
             margin-bottom: 20px;
-            font-size: 1.1rem;
         }
 
-        /* 지도 컨테이너: 가로세로 비율을 유지하며 반응형으로 작동 */
-        .map-container {
+        h1 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin: 0 0 8px 0;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* 반응형 지도 컨테이너 */
+        .map-board {
             position: relative;
             width: 100%;
-            max-width: 900px;
-            background: #e0f2fe; /* 바다 느낌의 배경색 */
-            border: 4px solid #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            max-width: 960px;
+            aspect-ratio: 960 / 540; /* 교과서 세계지도 가로세로 표준 비율 */
+            background-color: #bae6fd; /* 바다 기초색 */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 4px solid #ffffff;
         }
 
-        /* 실제 세계지도 이미지 (대체용 고품질 일러스트 지도) */
-        .world-map {
+        /* 실제 세계지도 윤곽선 묘사 (경·위선 가이드 포함) */
+        .base-map {
             width: 100%;
+            height: 100%;
             display: block;
-            height: auto;
-            opacity: 0.9;
         }
 
-        /* 위치 핀 스타일 */
-        .marker {
+        /* 위치 핀(마커) 공통 스타일 */
+        .pin {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            background-color: var(--secondary);
-            border: 3px solid #fff;
+            width: 28px;
+            height: 28px;
+            border: 3px solid #ffffff;
             border-radius: 50%;
             cursor: pointer;
             transform: translate(-50%, -50%);
-            transition: all 0.2s ease-in-out;
-            animation: pulse 2s infinite;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         }
 
-        .marker:hover {
-            transform: translate(-50%, -50%) scale(1.3);
-            background-color: #22c55e; /* 호버 시 초록색으로 변경 */
+        /* 대륙 핀: 주황색 */
+        .pin.continent {
+            background-color: var(--continent-color);
+            animation: pulse-continent 2s infinite;
         }
 
-        /* 대양(바다)용 핀은 파란색 계열로 구분 */
-        .marker.ocean {
-            background-color: var(--primary);
+        /* 대양 핀: 파란색 */
+        .pin.ocean {
+            background-color: var(--ocean-color);
+            animation: pulse-ocean 2s infinite;
         }
 
-        /* 툴팁 (마우스 올렸을 때 이름 표시) */
+        /* 마우스 호버 효과 */
+        .pin:hover {
+            transform: translate(-50%, -50%) scale(1.25);
+            background-color: #22c55e !important; /* 활성화 시 초록색 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 말풍선 툴팁 스타일 */
         .tooltip {
-            visibility: hidden;
             position: absolute;
-            bottom: 35px;
+            bottom: 38px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: rgba(15, 23, 42, 0.9);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.2s;
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 23, 42, 0.9);
         }
 
-        .marker:hover .tooltip {
-            visibility: visible;
+        .pin:hover .tooltip {
             opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        /* 애니메이션 효과 */
+        @keyframes pulse-continent {
+            0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(234, 88, 12, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+        }
+
+        @keyframes pulse-ocean {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 114, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 99, 114, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 114, 0); }
         }
     </style>
 </head>
 <body>
 
-    <h1>🌍 대륙과 대양의 위치를 찾아라!</h1>
-    <p class="description">지도 위의 반짝이는 핀에 마우스를 올려 대륙과 대양의 이름을 확인해 보세요.</p>
+    <header>
+        <h1>🗺️ 세계 대륙과 대양 탐험도</h1>
+        <p class="subtitle">핀 위에 마우스를 올려 대륙과 대양의 이름, 그리고 초성 힌트를 확인해 보세요!</p>
+    </header>
 
-    <div class="map-container">
-        <!-- SVG로 간단히 그린 가상 세계 지도 배치 (실제 이미지 링크가 깨지는 것을 방지) -->
-        <svg class="world-map" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
-            <rect width="900" height="500" fill="#bae6fd"/>
-            <!-- 아시아 대륙 가이드 라인 -->
-            <path d="M500,100 Q650,80 750,150 T650,350 T500,250 Z" fill="#fef08a" stroke="#fef08a"/>
-            <!-- 유럽 -->
-            <path d="M400,100 Q480,80 500,150 T450,250 Z" fill="#bbf7d0" stroke="#bbf7d0"/>
-            <!-- 아프리카 -->
-            <path d="M400,220 Q500,250 520,380 T400,420 Z" fill="#fed7aa" stroke="#fed7aa"/>
+    <div class="map-board">
+        <!-- 정교한 로빈슨 도법 스타일의 가이드 세계지도 내장 (이미지 단절 방지 고품질 SVG형태) -->
+        <svg class="base-map" viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+            <!-- 바다 배경 및 기본 위선/경선 가이드 -->
+            <rect width="960" height="540" fill="#bae6fd"/>
+            <line x1="0" y1="270" x2="960" y2="270" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="4"/> <!-- 적도선 -->
+            <line x1="480" y1="0" x2="480" y2="540" stroke="#7dd3fc" stroke-width="1" stroke-dasharray="4"/>
+            
+            <!-- 6대륙 기본 지형 레이아웃 시각화 -->
             <!-- 북아메리카 -->
-            <path d="M100,80 Q250,100 300,200 T200,300 Z" fill="#fbcfe8" stroke="#fbcfe8"/>
+            <path d="M120,80 C180,60 320,120 340,180 C320,240 280,260 220,260 C180,220 100,160 120,80 Z" fill="#f87171" opacity="0.85"/>
             <!-- 남아메리카 -->
-            <path d="M200,280 Q300,350 250,480 T180,350 Z" fill="#ddd6fe" stroke="#ddd6fe"/>
+            <path d="M220,260 C260,280 340,320 320,380 C300,440 280,500 240,520 C220,460 200,340 220,260 Z" fill="#fbbf24" opacity="0.85"/>
+            <!-- 유럽 -->
+            <path d="M420,120 C460,80 520,80 540,140 C520,180 460,200 420,160 Z" fill="#34d399" opacity="0.85"/>
+            <!-- 아프리카 -->
+            <path d="M420,170 C480,160 560,200 560,260 C540,340 500,420 460,450 C420,380 380,280 420,170 Z" fill="#fb923c" opacity="0.85"/>
+            <!-- 아시아 -->
+            <path d="M540,140 C600,60 820,80 880,180 C840,280 720,360 620,320 C600,240 540,200 540,140 Z" fill="#a78bfa" opacity="0.85"/>
             <!-- 오세아니아 -->
-            <path d="M700,330 Q800,350 780,420 T680,380 Z" fill="#fecdd3" stroke="#fecdd3"/>
+            <path d="M740,340 C800,330 860,360 840,420 C780,440 720,400 740,340 Z" fill="#f472b6" opacity="0.85"/>
         </svg>
 
-        <!-- 6대륙 핀 배치 (percentage 기반으로 반응형 위치 설정) -->
-        <div class="marker" style="top: 30%; left: 65%;">
+        <!-- [6대륙 핀] 교과서 배치 기준 수리적 위치 연동 -->
+        <div class="pin continent" style="top: 32%; left: 72%;">
             <div class="tooltip">아시아 (ㅇㅅㅇ)</div>
         </div>
-        <div class="marker" style="top: 26%; left: 48%;">
+        <div class="pin continent" style="top: 24%; left: 49%;">
             <div class="tooltip">유럽 (ㅇㄹ)</div>
         </div>
-        <div class="marker" style="top: 55%; left: 47%;">
+        <div class="pin continent" style="top: 52%; left: 47%;">
             <div class="tooltip">아프리카 (ㅇㅍㄹㅋ)</div>
         </div>
-        <div class="marker" style="top: 32%; left: 22%;">
+        <div class="pin continent" style="top: 30%; left: 23%;">
             <div class="tooltip">북아메리카 (ㅂㅇㅁㄹㅋ)</div>
         </div>
-        <div class="marker" style="top: 68%; left: 28%;">
+        <div class="pin continent" style="top: 68%; left: 29%;">
             <div class="tooltip">남아메리카 (ㄴㅇㅁㄹㅋ)</div>
         </div>
-        <div class="marker" style="top: 72%; left: 80%;">
+        <div class="pin continent" style="top: 72%; left: 81%;">
             <div class="tooltip">오세아니아 (ㅇㅅㅇㄴㅇ)</div>
         </div>
 
-        <!-- 5대양 핀 배치 -->
-        <div class="marker ocean" style="top: 45%; left: 8%;">
+        <!-- [5대양 핀] 주요 해양 영역 연동 -->
+        <div class="pin ocean" style="top: 45%; left: 9%;">
             <div class="tooltip">태평양 (ㅌㅍㅇ)</div>
         </div>
-        <div class="marker ocean" style="top: 45%; left: 92%;">
+        <div class="pin ocean" style="top: 45%; left: 91%;">
             <div class="tooltip">태평양 (ㅌㅍㅇ)</div>
         </div>
-        <div class="marker ocean" style="top: 48%; left: 36%;">
+        <div class="pin ocean" style="top: 46%; left: 36%;">
             <div class="tooltip">대서양 (ㄷㅅㅇ)</div>
         </div>
-        <div class="marker ocean" style="top: 60%; left: 62%;">
+        <div class="pin ocean" style="top: 60%; left: 65%;">
             <div class="tooltip">인도양 (ㅇㄷㅇ)</div>
         </div>
-        <div class="marker ocean" style="top: 8%; left: 50%;">
+        <div class="pin ocean" style="top: 8%; left: 50%;">
             <div class="tooltip">북극해 (ㅂㄱㅎ)</div>
         </div>
-        <div class="marker ocean" style="top: 90%; left: 50%;">
+        <div class="pin ocean" style="top: 92%; left: 50%;">
             <div class="tooltip">남극해 (ㄴㄱㅎ)</div>
         </div>
     </div>
