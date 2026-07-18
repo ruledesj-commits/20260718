@@ -37,19 +37,19 @@
         }
         .score-box { background: #e2e8f0; padding: 6px 16px; border-radius: 20px; color: #334155; }
 
-        /* 고화질 지도 보드 (정밀 이미지 배경) */
+        /* 고화질 실제 백지도 보드 */
         .map-board {
             position: relative;
             width: 100%;
             max-width: 900px;
-            aspect-ratio: 16 / 9; /* 표준 와이드 세계지도 비율 */
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'); /* 세밀한 지형 표현을 위한 고화질 지도 이미지 (교체 가능) */
-            background-size: cover;
+            aspect-ratio: 16 / 9;
+            background-image: url('https://i.ibb.co/680Ld4Z/world-blank-map.png'); /* 실제 정밀 해안선 백지도 연동 */
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             background-position: center;
             border-radius: 16px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             border: 4px solid #ffffff;
-            overflow: visible; /* 툴팁이 잘리지 않도록 설정 */
         }
 
         /* 반응형 위치 핀 */
@@ -176,34 +176,34 @@
 <body>
 
     <header>
-        <h1>🗺️ 세밀한 세계지도로 배우는 대륙과 대양 탐험</h1>
-        <p class="subtitle">실제 정밀 지형을 보며 질문을 해결하고, 나만의 탐험 점수를 채워보세요!</p>
+        <h1>🗺️ 실제 지도로 배우는 세계 대륙과 대양 탐험</h1>
+        <p class="subtitle">정밀한 해안선 백지도를 관찰하며 질문을 해결하고 미션을 완료해 보세요!</p>
     </header>
 
     <div class="status-bar">
         <div class="score-box">내 점수: <span id="score">0</span> / 110점</div>
     </div>
 
-    <!-- 정밀 배경 이미지 기반 지도 보드 -->
+    <!-- 실제 백지도 이미지 배경 기반 보드 -->
     <div class="map-board">
-        <!-- 대륙 핀 위치 최적화 조정 (16:9 이미지 비율 기준 고정 핀) -->
-        <div class="pin unsolved" data-id="asia" style="top: 32%; left: 74%;">?</div>
-        <div class="pin unsolved" data-id="europe" style="top: 26%; left: 52%;">?</div>
-        <div class="pin unsolved" data-id="africa" style="top: 54%; left: 51%;">?</div>
-        <div class="pin unsolved" data-id="na" style="top: 30%; left: 21%;">?</div>
-        <div class="pin unsolved" data-id="sa" style="top: 68%; left: 30%;">?</div>
-        <div class="pin unsolved" data-id="oceania" style="top: 70%; left: 84%;">?</div>
+        <!-- 대륙 핀 위치 재조정 (실제 지도 좌표 맞춤) -->
+        <div class="pin unsolved" data-id="asia" style="top: 28%; left: 73%;">?</div>
+        <div class="pin unsolved" data-id="europe" style="top: 24%; left: 51%;">?</div>
+        <div class="pin unsolved" data-id="africa" style="top: 55%; left: 51%;">?</div>
+        <div class="pin unsolved" data-id="na" style="top: 28%; left: 21%;">?</div>
+        <div class="pin unsolved" data-id="sa" style="top: 68%; left: 32%;">?</div>
+        <div class="pin unsolved" data-id="oceania" style="top: 70%; left: 83%;">?</div>
         
-        <!-- 대양 핀 위치 최적화 조정 -->
+        <!-- 대양 핀 위치 재조정 -->
         <div class="pin unsolved" data-id="pacific1" style="top: 45%; left: 6%;">?</div>
         <div class="pin unsolved" data-id="pacific2" style="top: 45%; left: 94%;">?</div>
-        <div class="pin unsolved" data-id="atlantic" style="top: 48%; left: 38%;">?</div>
-        <div class="pin unsolved" data-id="indian" style="top: 62%; left: 66%;">?</div>
-        <div class="pin unsolved" data-id="arctic" style="top: 8%; left: 50%;">?</div>
+        <div class="pin unsolved" data-id="atlantic" style="top: 46%; left: 39%;">?</div>
+        <div class="pin unsolved" data-id="indian" style="top: 60%; left: 66%;">?</div>
+        <div class="pin unsolved" data-id="arctic" style="top: 7%; left: 50%;">?</div>
         <div class="pin unsolved" data-id="antarctic" style="top: 92%; left: 50%;">?</div>
     </div>
 
-    <!-- Canva 양식 연동 하단 성찰 일지 코너 -->
+    <!-- 성찰 일지 코너 -->
     <div class="reflection-panel">
         <div class="reflection-title">✏️ 학생 눈으로 내가 만든 도구 살펴보는 성찰일지</div>
         <div class="reflection-q">
