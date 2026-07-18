@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5학년 사회 대륙 대양 탐험 교구</title>
-    <!-- 폭죽 효과 라이브러리 -->
+    <title>5학년 사회 - 세계 대륙과 대양 탐험 미션</title>
+    <!-- 폭죽 애니메이션을 위한 외부 라이브러리 연동 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -37,22 +37,22 @@
         }
         .score-box { background: #e2e8f0; padding: 6px 16px; border-radius: 20px; color: #334155; }
 
-        /* 고화질 실제 백지도 보드 */
+        /* 전달받은 정밀 지도를 배경으로 하는 배포용 보드 */
         .map-board {
             position: relative;
             width: 100%;
             max-width: 900px;
-            aspect-ratio: 16 / 9;
-            background-image: url('https://i.ibb.co/680Ld4Z/world-blank-map.png'); /* 실제 정밀 해안선 백지도 연동 */
+            aspect-ratio: 914 / 610; /* 이미지 원본 정밀 가로세로 비율 매핑 */
+            background-image: url('https://i.ibb.co/3CB1dM0/pngtree-isolated-world-map-image-1062071.jpg'); /* 제공해주신 실제 백지도 고해상도 웹 주소 연동 */
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
             border: 4px solid #ffffff;
         }
 
-        /* 반응형 위치 핀 */
+        /* 반응형 학습 제어 핀 */
         .pin {
             position: absolute;
             width: 32px;
@@ -69,14 +69,14 @@
             color: white;
             font-weight: bold;
             font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
         }
         .pin.unsolved { background-color: #475569 !important; animation: blink 1.5s infinite; }
         .pin.continent { background-color: var(--continent-color); }
         .pin.ocean { background-color: var(--ocean-color); }
         .pin:hover { transform: translate(-50%, -50%) scale(1.25); z-index: 5; }
 
-        /* 퀴즈 모달 팝업 */
+        /* 퀴즈 모달 팝업 레이아웃 */
         .modal {
             display: none;
             position: fixed;
@@ -177,44 +177,46 @@
 
     <header>
         <h1>🗺️ 실제 지도로 배우는 세계 대륙과 대양 탐험</h1>
-        <p class="subtitle">정밀한 해안선 백지도를 관찰하며 질문을 해결하고 미션을 완료해 보세요!</p>
+        <p class="subtitle">교과서 정밀 백지도를 관찰하고 핀을 클릭해 미션을 해결해 보세요!</p>
     </header>
 
     <div class="status-bar">
         <div class="score-box">내 점수: <span id="score">0</span> / 110점</div>
     </div>
 
-    <!-- 실제 백지도 이미지 배경 기반 보드 -->
+    <!-- 전달받은 실제 정밀 지도 맵 보드 -->
     <div class="map-board">
-        <!-- 대륙 핀 위치 재조정 (실제 지도 좌표 맞춤) -->
-        <div class="pin unsolved" data-id="asia" style="top: 28%; left: 73%;">?</div>
-        <div class="pin unsolved" data-id="europe" style="top: 24%; left: 51%;">?</div>
-        <div class="pin unsolved" data-id="africa" style="top: 55%; left: 51%;">?</div>
-        <div class="pin unsolved" data-id="na" style="top: 28%; left: 21%;">?</div>
-        <div class="pin unsolved" data-id="sa" style="top: 68%; left: 32%;">?</div>
-        <div class="pin unsolved" data-id="oceania" style="top: 70%; left: 83%;">?</div>
+        <!-- 제공된 푸른색 대륙 배치 레이아웃에 맞춰 정교하게 재조정한 12개 핀 마커 -->
+        <!-- 대륙 핀 (6대륙) -->
+        <div class="pin unsolved" data-id="asia" style="top: 36%; left: 36%;">?</div>
+        <div class="pin unsolved" data-id="europe" style="top: 25%; left: 19%;">?</div>
+        <div class="pin unsolved" data-id="africa" style="top: 50%; left: 16%;">?</div>
+        <div class="pin unsolved" data-id="na" style="top: 26%; left: 74%;">?</div>
+        <div class="pin unsolved" data-id="sa" style="top: 64%; left: 85%;">?</div>
+        <div class="pin unsolved" data-id="oceania" style="top: 68%; left: 44%;">?</div>
         
-        <!-- 대양 핀 위치 재조정 -->
-        <div class="pin unsolved" data-id="pacific1" style="top: 45%; left: 6%;">?</div>
-        <div class="pin unsolved" data-id="pacific2" style="top: 45%; left: 94%;">?</div>
-        <div class="pin unsolved" data-id="atlantic" style="top: 46%; left: 39%;">?</div>
-        <div class="pin unsolved" data-id="indian" style="top: 60%; left: 66%;">?</div>
-        <div class="pin unsolved" data-id="arctic" style="top: 7%; left: 50%;">?</div>
-        <div class="pin unsolved" data-id="antarctic" style="top: 92%; left: 50%;">?</div>
+        <!-- 대양 핀 (5대양 - 대서양 양측 분할 예외구조 포함) -->
+        <div class="pin unsolved" data-id="pacific1" style="top: 48%; left: 56%;">?</div>
+        <div class="pin unsolved" data-id="pacific2" style="top: 48%; left: 95%;">?</div>
+        <div class="pin unsolved" data-id="atlantic1" style="top: 35%; left: 2%;">?</div>
+        <div class="pin unsolved" data-id="atlantic2" style="top: 42%; left: 98%;">?</div>
+        <div class="pin unsolved" data-id="indian" style="top: 58%; left: 29%;">?</div>
+        <div class="pin unsolved" data-id="arctic" style="top: 10%; left: 50%;">?</div>
+        <div class="pin unsolved" data-id="antarctic" style="top: 91%; left: 50%;">?</div>
     </div>
 
-    <!-- 성찰 일지 코너 -->
+    <!-- Canva 양식 기반 하단 성찰 일지 코너 -->
     <div class="reflection-panel">
         <div class="reflection-title">✏️ 학생 눈으로 내가 만든 도구 살펴보는 성찰일지</div>
         <div class="reflection-q">
             <strong>🤔 오늘 나의 성찰질문:</strong><br>
-            "이 지도 교구는 처음 학습하는 친구들이 참여했을 때 평면 지도와 입체 지구본의 크기 왜곡 차이를 한눈에 쉽게 이해할 수 있도록 정교하게 구성되어 있는가? 오늘 활동을 통해 깨달은 점을 적어봅시다."[cite: 1]
+            "이 대륙과 대양 탐험 교구는 처음 학습하는 친구들이 참여했을 때 평면 지도와 입체 지구본의 크기 왜곡 차이를 한눈에 쉽게 이해할 수 있도록 유익하게 구성되어 있는가? 오늘 활동을 통해 깨달은 점을 적어봅시다."[cite: 1]
         </div>
-        <textarea id="reflectionText" placeholder="여기에 성찰 기록을 작성하세요... (예: 실제 세밀한 지도로 관찰하니 왜곡된 북극해의 크기나 아프리카 대륙의 진짜 형태를 직관적으로 비교할 수 있어 유익했습니다.)"></textarea>
+        <textarea id="reflectionText" placeholder="여기에 성찰 기록을 작성하세요... (예: 실제 세밀한 푸른색 지도로 위치를 확인하며 학습하니 늘어나 보이던 북극해나 아프리카의 진짜 방위적 크기 관계를 직관적으로 비교할 수 있어 유익했습니다.)"[cite: 1]></textarea>
         <button class="submit-btn" onclick="saveReflection()">성찰 기록 인쇄 / PDF 저장하기</button>
     </div>
 
-    <!-- 퀴즈 팝업창 -->
+    <!-- 퀴즈 팝업 모달 -->
     <div class="modal" id="quizModal">
         <div class="modal-content">
             <div class="modal-title" id="modalTitle">탐험 퀴즈</div>
@@ -226,17 +228,19 @@
     </div>
 
     <script>
+        // 지도서 410쪽 지침을 기반으로 한 퀴즈 메인 데이터셋[cite: 1]
         const quizData = {
             asia: { title: "대륙 탐험", type: "continent", hint: "ㅇㅅㅇ", ans: "아시아", guide: "💡 유럽의 동쪽에 있으며, 실제 지구상에서 가장 면적이 넓은 거대한 대륙입니다."[cite: 1], choices: ["아시아", "오세아니아", "아프리카", "유럽"] },
             europe: { title: "대륙 탐험", type: "continent", hint: "ㅇㄹ", ans: "유럽", guide: "💡 아시아의 서쪽, 아프리카의 북쪽에 긴밀하게 붙어 있는 대륙입니다."[cite: 1], choices: ["유럽", "아시아", "북아메리카", "남아메리카"] },
             africa: { title: "대륙 탐험 (면적 왜곡 주의!)", type: "continent", hint: "ㅇㅍㄹㅋ", ans: "아프리카", guide: "⚠️ 중요(지도서 410쪽 지침): 평면 지도에선 북아메리카와 크기가 비슷해 보이지만, 실제 입체 지구본으로 보면 아프리카가 훨씬 큽니다!"[cite: 1], choices: ["아프리카", "남아메리카", "북아메리카", "유럽"] },
-            na: { title: "대륙 탐험 (면적 왜곡 주의!)", type: "continent", hint: "ㅂㅇㅁㄹㅋ", ans: "북아메리카", guide: "⚠️ 중요: 평면 지도에서는 고위도 그린란드나 캐나다 영토가 실제보다 크게 확대되어 보입니다. 남아메리카의 북쪽에 있습니다."[cite: 1], choices: ["북아메리카", "남아메리카", "아시아", "아프리카"] },
-            sa: { title: "대륙 탐험", type: "continent", hint: "ㄴㅇㅁㄹㅋ", ans: "남아메리카", guide: "💡 북아메리카의 남쪽에 삼각형 모양으로 뻗어 있으며, 대서양과 태평양 사이에 위치합니다."[cite: 1], choices: ["남아메리카", "북아메리카", "오세아니아", "아프리카"] },
-            oceania: { title: "대륙 탐험", type: "continent", hint: "ㅇㅅㅇㄴㅇ", ans: "오세아니아", guide: "💡 아시아의 남동쪽에 위치하며, 6대륙 중 가장 면적이 작은 대륙입니다."[cite: 1], choices: ["오세아니아", "아시아", "유럽", "남아메리카"] },
-            pacific1: { title: "대양 탐험", type: "ocean", hint: "ㅌㅍㅇ", ans: "태평양", guide: "💡 아시아 대륙과 아메리카 대륙 사이에 있는 세계에서 가장 넓고 거대한 바다입니다."[cite: 1], choices: ["태평양", "대서양", "인도양", "북극해"] },
-            pacific2: { title: "대양 탐험", type: "ocean", hint: "ㅌㅍㅇ", ans: "태평양", guide: "💡 아시아 대륙과 아메리카 대륙 사이에 있는 세계에서 가장 넓고 거대한 바다입니다."[cite: 1], choices: ["태평양", "대서양", "인도양", "북극해"] },
-            atlantic: { title: "대양 탐험", type: "ocean", hint: "ㄷㅅㅇ", ans: "대서양", guide: "💡 아메리카 대륙과 유럽, 아프리카 대륙 사이에 끼어 있는 두 번째로 큰 바다입니다."[cite: 1], choices: ["대서양", "태평양", "인도양", "남극해"] },
-            indian: { title: "대양 탐험", type: "ocean", hint: "ㅇㄷㅇ", ans: "인도양", guide: "💡 아시아, 아프리카, 오세아니아 대륙 사이에 오목하게 자리 잡은 세 번째로 큰 바다입니다."[cite: 1], choices: ["인도양", "대서양", "태평양", "북극해"] },
+            na: { title: "대륙 탐험 (면적 왜곡 주의!)", type: "continent", hint: "ㅂㅇㅁㄹㅋ", ans: "북아메리카", guide: "⚠️ 중요: 평면 지도에서는 고위도 캐나다 영토가 실제보다 크게 확대되어 보입니다. 남아메리카의 북쪽에 있습니다."[cite: 1], choices: ["북아메리카", "남아메리카", "아시아", "아프리카"] },
+            sa: { title: "대륙 탐험", type: "continent", hint: "ㄴㅇㅁㄹㅋ", ans: "남아메리카", guide: "💡 북아메리카의 남쪽에 긴 마름모 모양으로 뻗어 있으며, 대서양과 태평양 사이에 위치합니다."[cite: 1], choices: ["남아메리카", "북아메리카", "오세아니아", "아프리카"] },
+            oceania: { title: "대륙 탐험", type: "continent", hint: "ㅇㅅㅇㄴㅇ", ans: "오세아니아", guide: "💡 아시아의 남동쪽에 위치하며, 6대륙 중 가장 면적이 작은 독립적인 대륙입니다."[cite: 1], choices: ["오세아니아", "아시아", "유럽", "남아메리카"] },
+            pacific1: { title: "대양 탐험", type: "ocean", hint: "ㅌㅍㅇ", ans: "태평양", guide: "💡 아시아 대륙과 아메리카 대륙 사이에 위치한 세계에서 가장 넓고 거대한 바다입니다."[cite: 1], choices: ["태평양", "대서양", "인도양", "북극해"] },
+            pacific2: { title: "대양 탐험", type: "ocean", hint: "ㅌㅍㅇ", ans: "태평양", guide: "💡 아시아 대륙과 아메리카 대륙 사이에 위치한 세계에서 가장 넓고 거대한 바다입니다."[cite: 1], choices: ["태평양", "대서양", "인도양", "북극해"] },
+            atlantic1: { title: "대양 탐험", type: "ocean", hint: "ㄷㅅㅇ", ans: "대서양", guide: "💡 아메리카 대륙과 유럽, 아프리카 대륙 사이에 끼어 있는 두 번째로 큰 대양입니다."[cite: 1], choices: ["대서양", "태평양", "인도양", "남극해"] },
+            atlantic2: { title: "대양 탐험", type: "ocean", hint: "ㄷㅅㅇ", ans: "대서양", guide: "💡 아메리카 대륙과 유럽, 아프리카 대륙 사이에 끼어 있는 두 번째로 큰 대양입니다."[cite: 1], choices: ["대서양", "태평양", "인도양", "남극해"] },
+            indian: { title: "대양 탐험", type: "ocean", hint: "ㅇㄷㅇ", ans: "인도양", guide: "💡 아시아, 아프리카, 오세아니아 대륙 사이에 오목하게 자리 잡은 세 번째로 큰 대양입니다."[cite: 1], choices: ["인도양", "대서양", "태평양", "북극해"] },
             arctic: { title: "대양 탐험 (지도의 왜곡!)", type: "ocean", hint: "ㅂㄱㅎ", ans: "북극해", guide: "⚠️ 중요: 평면 세계지도 가장 윗부분에 길게 늘어나 보이지만, 실제로는 북극점 주변을 동그랗게 둘러싼 바다입니다."[cite: 1], choices: ["북극해", "남극해", "대서양", "태평양"] },
             antarctic: { title: "대양 탐험 (지도의 왜곡!)", type: "ocean", hint: "ㄴㄱㅎ", ans: "남극해", guide: "⚠️ 중요: 평면 지도 맨 아래쪽에 가로로 길게 표시되지만, 실제로는 남극 대륙을 둥글게 감싸고 있는 독립된 바다입니다."[cite: 1], choices: ["남극해", "북극해", "인도양", "대서양"] }
         };
@@ -278,18 +282,22 @@
                 document.getElementById('score').innerText = currentScore;
                 
                 const currentId = activePin.getAttribute('data-id');
+                // 태평양 및 대서양 양측 분할 정답 연동 처리
                 if (currentId === 'pacific1' || currentId === 'pacific2') {
                     document.querySelectorAll('[data-id="pacific1"], [data-id="pacific2"]').forEach(p => revealPin(p, quizData[currentId]));
+                } else if (currentId === 'atlantic1' || currentId === 'atlantic2') {
+                    document.querySelectorAll('[data-id="atlantic1"], [data-id="atlantic2"]').forEach(p => revealPin(p, quizData[currentId]));
                 } else {
                     revealPin(activePin, quizData[currentId]);
                 }
 
+                // 모든 미션 클리어 시 만점 폭죽 팡파르 발사
                 if (currentScore >= 110) {
                     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                    setTimeout(() => { alert("🎉 대단해요! 실제 정밀 지도를 바탕으로 5대양 6대륙 미션을 완벽히 완료했습니다!"); }, 500);
+                    setTimeout(() => { alert("🎉 축하합니다! 정밀 지도를 바탕으로 5대양 6대륙 미션을 완벽히 마쳤습니다. 하단의 성찰일지를 마저 완성해 보세요!"); }, 500);
                 }
             } else {
-                alert("❌ 다시 한 번 지형의 위치와 힌트를 조합해 보세요!");
+                alert("❌ 지형의 위치와 가이드 상자의 힌트를 다시 조합해 보세요!");
             }
         }
 
@@ -302,7 +310,7 @@
         function saveReflection() {
             const text = document.getElementById('reflectionText').value;
             if(!text.trim()) {
-                alert("성찰 기록 내용을 입력한 후에 인쇄를 진행해 주세요.");
+                alert("성찰 기록 내용을 입력한 후에 인쇄 또는 PDF 저장을 진행해 주세요.");
                 return;
             }
             window.print();
